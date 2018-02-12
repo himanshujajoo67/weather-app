@@ -1,6 +1,6 @@
 const request = require('request');
 
-var geocodeAddress = (address) => {
+var geocodeAddress = (address,callback) => {
   var encodedAddress = encodeURIComponent(address);
 
   request ({
@@ -8,16 +8,20 @@ var geocodeAddress = (address) => {
     json: true
   }, (error, response, body) => {
     if(error) {
-      console.log('unable to connect to Google Server');
+      callback('Unable to connect to Google Server');
     } else if (body.status === 'ZERO_RESULTS') {
-      console.log('Unable to find address');
+      callback('Unable to find address');
     } else if (body.status === 'OK') {
-      console.log(`Address: ${body.results[0].formatted_address}`);
-      console.log(`Lattitude ${body.results[0].geometry.location.lat}`);
-      console.log(`Longitude ${body.results[0].geometry.location.lng}`);
+      callback(undefined, {
+        address: body.results[0].formatted_address,
+        Lattitude: body.results[0].geometry.location.lat,
+        Longitude: body.results[0].geometry.location.lng
+      });
     }
 
   });
 };
 
 module.exports.geocodeAddress = geocodeAddress;
+
+// 5c87d9140cda2bab6fe48cd6e3e6b5e5
